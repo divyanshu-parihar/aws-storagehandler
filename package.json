@@ -1,0 +1,18 @@
+{
+  "name": "cc-non-guided-project",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "npx nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "Divyanshu Parihar",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1"
+  }
+}
