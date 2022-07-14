@@ -1,1 +1,4 @@
-export const PORT = 3000
+const PORT = 3000
+const AWS_ACCESS_ID  = 'AKIA5I7W25QLXBOWF4TU'
+const AWS_ACCESS_TOKEN = '9TL4tBOki4PME4//oUm7Tkx3pQZJXlITU84084BE'
+module.exports = {PORT}
