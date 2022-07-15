@@ -1,8 +1,10 @@
 //  CONSTANTS
-const {PORT} = require('./config.js');
+const {PORT,AWS_ACCESS_ID,AWS_ACCESS_TOKEN} = require('./config.js');
+const {toJSON, fromJSON}  =  require('flatted')
 const express = require('express')
 const session =  require('express-session');
 const passport = require('passport');
+const { StorageHandler } = require('./awsHandler.js');
 require('./auth')
 
 
@@ -44,9 +46,12 @@ app.get('/auth/google/callback',
   })
 );
 
-app.get('/dashboard', isLoggedIn, (req, res) => {
+app.get('/dashboard', isLoggedIn, async (req, res) => {
+  // let results = new StorageHandler().createBuckets(req.user.id)
+  let manager = new StorageHandler()
+  let results = await manager.listBuckets()
   res.render('dashboard',{
-    user:JSON.stringify(req.user,null,2) || null
+    results:JSON.stringify(results,null,2) || null
   })
 });
 
@@ -59,4 +64,6 @@ app.get('/logout', (req, res) => {
 app.get('/auth/google/failure', (req, res) => {
   res.send('Failed to authenticate..');
 });
-app.listen(PORT, () => console.log(`SERVER STARTED: ` + PORT))
+app.listen(PORT, () => {
+  console.log(`SERVER STARTED: ` + PORT)}
+)
