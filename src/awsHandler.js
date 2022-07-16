@@ -9,7 +9,7 @@ class StorageHandler {
         }});;
     }
 
-    async createBuckets(id) {
+    async createBucket(id) {
         this.s3Client.createBucket({ Bucket: id+"-cc-non-guided-project" }, function (err, data) {
             if (err) {
                 return err;
