@@ -1,7 +1,7 @@
 //  CONSTANTS
-const {PORT} = require('./config.js');
+const { PORT } = require('./config.js');
 const express = require('express')
-const session =  require('express-session');
+const session = require('express-session');
 const passport = require('passport');
 const { StorageHandler } = require('./awsHandler.js');
 require('./auth')
@@ -31,8 +31,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile','openid'] }
-));
+  passport.authenticate('google', { scope: ['email', 'profile', 'openid'] }
+  ));
 
 app.get('/auth/google/callback',
   passport.authenticate('google', {
@@ -41,13 +41,13 @@ app.get('/auth/google/callback',
   })
 );
 
-app.get('/dashboard', isLoggedIn,async (req, res) => {
+app.get('/dashboard', isLoggedIn, async (req, res) => {
   let results = await StorageManager.listBuckets()
-  results['Buckets'].some(async (el)=>{
-    if(el['Name'] !== `${req.user.id}-cc-non-guided-project`) {console.log('here');await StorageManager.createBucket(req.user.id)}
+  results['Buckets'].some(async (el) => {
+    if (el['Name'] !== `${req.user.id}-cc-non-guided-project`) { console.log('here'); await StorageManager.createBucket(req.user.id) }
   })
-  res.render('dashboard',{
-    results:JSON.stringify(results,null,2) || null
+  res.render('dashboard', {
+    results: JSON.stringify(results, null, 2) || null
   })
 });
 
@@ -61,7 +61,20 @@ app.get('/auth/google/failure', (req, res) => {
   res.send('Failed to authenticate..');
 });
 
+app.get('/uploadFile', async (req, res) => {
+  res.send("... uploading files")
+})
+
+app.post('/uploadFile', async (req, res) => {
+  const file = req.file
+  console.log(req)
+
+  await StorageManager.putObject(req.user.id, file);
+  res.send("file uploaded successfully")
+})
+
+
 app.listen(PORT, () => {
   global.StorageManager = new StorageHandler()
-  console.log(`SERVER STARTED: ` + PORT)}
-)
+  console.log(`SERVER STARTED: ` + PORT)
+})

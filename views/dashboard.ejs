@@ -1,3 +1,14 @@
 Dashboard page
-
+<script>
+    // const handleSubmit = (e)=>{
+    //     const file = document.getElementById('inputFile')
+    //     console.log(file.files[0].name)
+    // }
+</script>
 <pre><%= results %></pre>
+
+
+<form method="post" onsubmit="handleSubmit()" action="/uploadFile">
+    <input type="file" id="inputFile">
+    <button type="submit"> Upload</button>
+</form>
