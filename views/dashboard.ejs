@@ -1,14 +1,17 @@
 Dashboard page
 <script>
-    // const handleSubmit = (e)=>{
-    //     const file = document.getElementById('inputFile')
-    //     console.log(file.files[0].name)
-    // }
+    const handleChange = () => {
+        const file = document.getElementById('inputFile')
+        document.getElementById('hiddenName').value = file.files[0].name
+        console.log(file.files[0].name)
+        // console.log('here')
+    }
 </script>
 <pre><%= results %></pre>
 
 
-<form method="post" onsubmit="handleSubmit()" action="/uploadFile">
-    <input type="file" id="inputFile">
+<form method="post" action="/uploadFile">
+    <input type="file" id="inputFile" onchange="return handleChange()">
+    <input type="hidden" name="FileName" id="hiddenName" value='Default' />
     <button type="submit"> Upload</button>
 </form>

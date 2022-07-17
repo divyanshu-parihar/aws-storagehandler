@@ -1,6 +1,7 @@
 //  CONSTANTS
 const { PORT } = require('./config.js');
 const express = require('express')
+// const bodyParser = require("body-parser");
 const session = require('express-session');
 const passport = require('passport');
 const { StorageHandler } = require('./awsHandler.js');
@@ -19,10 +20,8 @@ app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
-
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 // engine 
 app.set('view engine', 'ejs')
 
@@ -43,9 +42,15 @@ app.get('/auth/google/callback',
 
 app.get('/dashboard', isLoggedIn, async (req, res) => {
   let results = await StorageManager.listBuckets()
-  results['Buckets'].some(async (el) => {
-    if (el['Name'] !== `${req.user.id}-cc-non-guided-project`) { console.log('here'); await StorageManager.createBucket(req.user.id) }
+  let FoundPrev = false;
+  let check  = results['Buckets'].some(async (el) => {
+    if (el['Name'] === `${req.user.id}-cc-non-guided-project`) { 
+        return FoundPrev= true; 
+    }
   })
+  if(!check){
+    await StorageManager.createBucket(req.user.id).name
+  }
   res.render('dashboard', {
     results: JSON.stringify(results, null, 2) || null
   })
@@ -67,9 +72,8 @@ app.get('/uploadFile', async (req, res) => {
 
 app.post('/uploadFile', async (req, res) => {
   const file = req.file
-  console.log(req)
-
-  await StorageManager.putObject(req.user.id, file);
+  console.log(req.body.FileName)
+  await StorageManager.putObject(req.user.id, file, req.body.FileName);
   res.send("file uploaded successfully")
 })
 

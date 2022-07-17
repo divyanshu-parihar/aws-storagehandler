@@ -26,11 +26,11 @@ class StorageHandler {
         return data;
     }
 
-    async putObject(id,file) {
+    async putObject(id,file,name) {
         console.log(`${id}-cc-non-guided-project`)
         let params = {
             Bucket: `${id}-cc-non-guided-project`,
-            Key: 'file',
+            Key: name,
             Body: file,
             ContentEncoding: 'base64',
             ContentType: '',
