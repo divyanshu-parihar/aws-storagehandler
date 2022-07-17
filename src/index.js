@@ -44,18 +44,38 @@ app.get('/dashboard', isLoggedIn, async (req, res) => {
   let results = await StorageManager.listBuckets()
   let FoundPrev = false;
   let check  = results['Buckets'].some(async (el) => {
-    if (el['Name'] === `${req.user.id}-cc-non-guided-project`) { 
+    if (el['Name'] === `${req.user.id}`) { 
         return FoundPrev= true; 
     }
   })
+  console.log(FoundPrev)
   if(!check){
-    await StorageManager.createBucket(req.user.id).name
+    await StorageManager.createBucket(req.user.id)
   }
+
+
+  results = await StorageManager.listBuckets()
   res.render('dashboard', {
     results: JSON.stringify(results, null, 2) || null
   })
 });
 
+app.get("/list", isLoggedIn,async (req, res) => {
+    let x = await StorageManager.listObjects(req.user.id)
+    res.send(`<pre>${JSON.stringify(x,null, 2)}</pre>`)
+})
+
+app.post("/delete", isLoggedIn,async (req, res) => {
+    let fileName = req.params.fileName
+    let x = await StorageManager.deleteObject(req.user.id,fileName)
+    res.send(`<pre>${JSON.stringify(x,null, 2)}</pre>`)
+})
+
+app.post('/download',isLoggedIn,async(req,res)=>{
+  let fileName = req.params.fileName
+  let x = await await StorageManager.downloadObject(req.user.id,fileName)
+  res.send(x)
+})
 app.get('/logout', (req, res) => {
   req.logout();
   req.session.destroy();

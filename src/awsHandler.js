@@ -1,3 +1,4 @@
+const { BucketAlreadyExists } = require('@aws-sdk/client-s3');
 const aws = require('aws-sdk');
 const { AWS_ACCESS_ID, AWS_ACCESS_TOKEN } = require('./config');
 
@@ -12,24 +13,21 @@ class StorageHandler {
     }
 
     async createBucket(id) {
-        this.s3Client.createBucket({ Bucket: id + "-cc-non-guided-project" }, function (err, data) {
-            if (err) {
-                return err;
-            } else {
-                return data.Buckets;
-            }
-        });
-
+        let data = this.s3Client.createBucket({ Bucket: id }).promise();
+        return data;
     }
     async listBuckets() {
         let data = await this.s3Client.listBuckets().promise()
         return data;
     }
-
-    async putObject(id,file,name) {
-        console.log(`${id}-cc-non-guided-project`)
+    async listObjects(Bucket) {
+        let r = await this.s3Client.listObjectsV2({ Bucket: Bucket }).promise();
+        let x = r.Contents.map(item => item.Key);
+        return x;
+    }
+    async putObject(id, file, name) {
         let params = {
-            Bucket: `${id}-cc-non-guided-project`,
+            Bucket: `${id}`,
             Key: name,
             Body: file,
             ContentEncoding: 'base64',
@@ -39,6 +37,16 @@ class StorageHandler {
         let data = this.s3Client.putObject(params).promise()
         return data
 
+    }
+
+    async downloadObject(bucket, fileName) {
+        let data = await s3.getObject({ Bucket: bucket, Key: fileName }).promise();
+        return data;
+    }
+
+    async deleteObject(bucket, fileName) {
+        let data = await s3.deleteObject({ Bucket: bucket, Key: fileName }).promise();
+        return data;
     }
 }
 
