@@ -16,6 +16,7 @@ function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
 }
 
+app.use(express.static('public'))
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -24,7 +25,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 // engine 
 app.set('view engine', 'ejs')
-
 app.get('/', (req, res) => {
   res.render('index')
 })
