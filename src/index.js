@@ -48,15 +48,16 @@ app.get('/dashboard', isLoggedIn, async (req, res) => {
         return FoundPrev= true; 
     }
   })
-  console.log(FoundPrev)
+  // console.log(FoundPrev)
   if(!check){
     await StorageManager.createBucket(req.user.id)
   }
 
 
-  results = await StorageManager.listBuckets()
+  results = await StorageManager.listObjects(req.user.id)
+  
   res.render('dashboard', {
-    results: JSON.stringify(results, null, 2) || null
+    results: results || null
   })
 });
 
@@ -66,20 +67,23 @@ app.get("/list", isLoggedIn,async (req, res) => {
 })
 
 app.post("/delete", isLoggedIn,async (req, res) => {
-    let fileName = req.params.fileName
-    let x = await StorageManager.deleteObject(req.user.id,fileName)
-    res.send(`<pre>${JSON.stringify(x,null, 2)}</pre>`)
+    let fileName = req.body.fileName
+    console.log(fileName)
+    await StorageManager.deleteObject(req.user.id,fileName)
+    res.redirect('/dashboard')
 })
 
 app.post('/download',isLoggedIn,async(req,res)=>{
-  let fileName = req.params.fileName
-  let x = await await StorageManager.downloadObject(req.user.id,fileName)
+  let fileName = req.body.fileName
+  let x = await StorageManager.downloadObject(req.user.id,fileName)
   res.send(x)
 })
 app.get('/logout', (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.send('Goodbye!');
+  req.logout(()=>{
+    console.log('logged out')
+  });
+  // req.session.destroy();
+  res.redirect('/');
 });
 
 app.get('/auth/google/failure', (req, res) => {
@@ -92,9 +96,9 @@ app.get('/uploadFile', async (req, res) => {
 
 app.post('/uploadFile', async (req, res) => {
   const file = req.file
-  console.log(req.body.FileName)
+  // console.log(req.body.FileName)
   await StorageManager.putObject(req.user.id, file, req.body.FileName);
-  res.send("file uploaded successfully")
+  res.redirect("/dashboard")
 })
 
 

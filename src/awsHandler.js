@@ -33,19 +33,19 @@ class StorageHandler {
             ContentEncoding: 'base64',
             ContentType: '',
             ServerSideEncryption: 'AES256'
-        };;
+        };
         let data = this.s3Client.putObject(params).promise()
         return data
 
     }
 
     async downloadObject(bucket, fileName) {
-        let data = await s3.getObject({ Bucket: bucket, Key: fileName }).promise();
-        return data;
+        let data = await this.s3Client.getObject({ Bucket: bucket, Key: fileName }).promise();
+        return data; 
     }
 
     async deleteObject(bucket, fileName) {
-        let data = await s3.deleteObject({ Bucket: bucket, Key: fileName }).promise();
+        let data = await this.s3Client.deleteObject({ Bucket: bucket, Key: fileName }).promise();
         return data;
     }
 }

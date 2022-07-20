@@ -10,7 +10,7 @@ module.exports = {
       dodgerBlue: "#279af1",
     },
     fontFamily:{
-      roboto : ['Roboto',sans-serif]
+      roboto : ['Roboto']
     },
     extend: {},
   },

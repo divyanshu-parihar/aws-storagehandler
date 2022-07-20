@@ -1,17 +1,96 @@
-Dashboard page
-<script>
-    const handleChange = () => {
-        const file = document.getElementById('inputFile')
-        document.getElementById('hiddenName').value = file.files[0].name
-        // console.log(file.files[0].name)
-        // console.log('here')
-    }
-</script>
-<pre><%= results %></pre>
+<%- include('widgets/header') -%>
+    <script>
+        const handleChange = () => {
+            const file = document.getElementById('inputFile')
+            document.getElementById('hiddenName').value = file.files[0].name
+        }
 
 
-<form method="post" action="/uploadFile">
-    <input type="file" id="inputFile" onchange="return handleChange()">
-    <input type="hidden" name="FileName" id="hiddenName" value='Default' />
-    <button type="submit"> Upload</button>
-</form>
+        const handleDownload = async (name) => {
+            console.log('Downloading')
+            const response = await fetch('/download', {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify({
+                    fileName:name
+                }) // body data type must match "Content-Type" header
+            });
+            console.log(response)
+            return response;
+        }
+
+        const handleDelete =  async (name) => {
+            console.log("Deleting")
+            const response = await fetch('/delete', {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify({
+                    fileName:name
+                }) // body data type must match "Content-Type" header
+            });
+            location.reload()
+        }
+    </script>
+    <div class="container mx-auto px-4 font-[Roboto]">
+        <div class="heading flex items-center">
+            <div class="page__title text-4xl mb-5 w-full text-center my-5">
+                Dashboard
+            </div>
+            <a href='/logout' class="logout_btn btn rounded-lg border-white border-4 drop-shadow-lg mx-2 p-2 font-bold cursor-pointer  ease-in-out duration-500 flex items-center justify-center h-10 bg-slate-400 text-white">
+                Logout 
+            </a>
+        </div>
+        <form method="post" action="/uploadFile" class="bg-slate-400 flex p-4 items-center justify-center ">
+            <input type="file" id="inputFile" onchange="return handleChange()">
+            <input type="hidden" name="FileName" id="hiddenName" value='Default' />
+            <button type="submit"
+                class="btn rounded-lg text-white border-white border-2 p-2 drop-shadow-xl cursor-pointer hover:bg-white hover:text-slate-400 ease-in-out duration-500">
+                Upload</button>
+        </form>
+
+
+        <div class="buckets">
+            <div class="bucket__title">
+                Your Objects:
+            </div>
+        </div>
+        <!-- <pre><%= results %></pre> -->
+
+        <div class="results">
+            <% results.forEach(function(user){ %>
+                <div
+                    class="obj__tile flex justify-between items-center bg-slate-400 border-2 border-black rounded-sm px-2 py-2 text-white font-serif mb-2">
+                    <div class="name text-xl">
+                        <%= user %>
+                    </div>
+                    <div class="actions flex">
+                        <div class="btn rounded-lg border-white border-4 drop-shadow-lg mx-2 p-2 font-bold cursor-pointer hover:bg-green-400 ease-in-out duration-500"
+                            onclick="return handleDownload('<%= user %>')">Download
+                        </div>
+                        <div class="btn rounded-lg border-white border-4 drop-shadow-lg mx-2 p-2 font-bold cursor-pointer hover:bg-red-400 ease-in-out duration-500"
+                            onclick="return handleDelete('<%= user %>')">Delete</div>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+
+
+
+    </div>
+    <%- include('widgets/footer') -%>
