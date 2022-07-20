@@ -5,6 +5,8 @@ const fileUpload = require('express-fileupload')
 const session = require('express-session');
 const passport = require('passport');
 const { StorageHandler } = require('./awsHandler.js');
+const multer = require('multer')
+const multerS3 = require('multer-s3');
 require('./auth')
 
 
@@ -16,16 +18,14 @@ function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
 }
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 },
-}));
+app.use(fileUpload());
 app.use(express.static('public'))
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
@@ -58,7 +58,6 @@ app.get('/dashboard', isLoggedIn, async (req, res) => {
       return FoundPrev = true;
     }
   })
-  // console.log(FoundPrev)
   if (!check) {
     await StorageManager.createBucket(req.user.id)
   }
@@ -78,7 +77,6 @@ app.get("/list", isLoggedIn, async (req, res) => {
 
 app.post("/delete", isLoggedIn, async (req, res) => {
   let fileName = req.body.fileName
-  // console.log(fileName)
   await StorageManager.deleteObject(req.user.id, fileName)
   res.redirect('/dashboard')
 })
@@ -86,7 +84,6 @@ app.post("/delete", isLoggedIn, async (req, res) => {
 app.post('/download', isLoggedIn, async (req, res) => {
   let fileName = req.body.fileName
   let data = await StorageManager.downloadObject(req.user.id, fileName)
-  // console.log(data) 
   res.send(data)
 })
 app.get('/logout', (req, res) => {
@@ -108,15 +105,15 @@ app.get('/uploadFile', async (req, res) => {
 
 
 
-
-
-app.post('/uploadFile', async (req, res) => {
-  const file = req.file
-  // console.log(req.body.FileName)
+app.post('/upload', isLoggedIn, async (req, res) => {
+  if (!req.files) {
+    res.send("File was not found");
+    return;
+  }
+  const file = req.files.inputFile
   await StorageManager.putObject(req.user.id, file, req.body.FileName);
   res.redirect("/dashboard")
 })
-
 
 app.listen(PORT, () => {
   global.StorageManager = new StorageHandler()

@@ -7,7 +7,6 @@
 
 
         const handleDownload = async (name) => {
-            console.log('Downloading')
             const response = await fetch('/download', {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 headers: {
@@ -21,7 +20,6 @@
         }
 
         const handleDelete =  async (name) => {
-            console.log("Deleting")
             const response = await fetch('/delete', {
                 method: 'POST', // *GET, POST, PUT, DELETE, etc.
                 mode: 'cors', // no-cors, *cors, same-origin
@@ -49,9 +47,9 @@
                 Logout 
             </a>
         </div>
-        <form method="post" action="/uploadFile" class="bg-slate-400 flex p-4 items-center justify-center ">
-            <input type="file" id="inputFile" onchange="return handleChange()">
+        <form method="post" action="/upload" encType="multipart/form-data" class="bg-slate-400 flex p-4 items-center justify-center ">
             <input type="hidden" name="FileName" id="hiddenName" value='Default' />
+            <input type="file" id="inputFile" name='inputFile' onchange="return handleChange()">
             <button type="submit"
                 class="btn rounded-lg text-white border-white border-2 p-2 drop-shadow-xl cursor-pointer hover:bg-white hover:text-slate-400 ease-in-out duration-500">
                 Upload</button>

@@ -1,9 +1,11 @@
 const { BucketAlreadyExists } = require('@aws-sdk/client-s3');
-
 const multer = require('multer')
 const multerS3 = require('multer-s3');
+
 const aws = require('aws-sdk');
 const { AWS_ACCESS_ID, AWS_ACCESS_TOKEN } = require('./config');
+const { data } = require('autoprefixer');
+
 
 class StorageHandler {
     constructor() {
@@ -30,30 +32,18 @@ class StorageHandler {
     }
     async putObject(id, file, name) {
 
-
-        const upload = multer({
-            storage: multerS3({
-                s3: this.s3Client,
-                acl: "public-read",
-                bucket: id,
-                key: function (req, file, cb) {
-                    // console.log(file);
-                    cb(null, file.originalname)
-                }
-            })
-        })
         let params = {
             Bucket: `${id}`,
             Key: name,
-            Body: file,
+            Body: file.data,
             ContentEncoding: 'base64',
-            ContentType: '',
+            ContentType: 'pdf',
             ServerSideEncryption: 'AES256'
         };
         let data = this.s3Client.putObject(params).promise()
-        return data
-
+        return data;
     }
+
 
     async downloadObject(bucket, fileName) {
         // let data = await this.s3Client.getObject({ Bucket: bucket, Key: fileName }).createReadStream();
