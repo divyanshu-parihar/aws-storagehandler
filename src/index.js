@@ -102,9 +102,6 @@ app.get('/uploadFile', async (req, res) => {
   res.send("... uploading files")
 })
 
-
-
-
 app.post('/upload', isLoggedIn, async (req, res) => {
   if (!req.files) {
     res.send("File was not found");
