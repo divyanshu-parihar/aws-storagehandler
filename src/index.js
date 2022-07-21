@@ -112,7 +112,7 @@ app.post('/upload', isLoggedIn, async (req, res) => {
   res.redirect("/dashboard")
 })
 
-app.listen(PORT, () => {
+app.listen((process.env.port || PORT), () => {
   global.StorageManager = new StorageHandler()
   console.log(`SERVER STARTED: ` + PORT)
 })
