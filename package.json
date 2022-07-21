@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "npx nodemon src/index.js",
-    "build": "webpack",
+    "build": "node src/index.js",
     "tailwind:css": "postcss public/styles/main.css -o public/styles/dist/compiled.css"
   },
   "keywords": [],
