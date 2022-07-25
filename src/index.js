@@ -111,8 +111,8 @@ app.post('/upload', isLoggedIn, async (req, res) => {
   await StorageManager.putObject(req.user.id, file, req.body.FileName);
   res.redirect("/dashboard")
 })
-const port = process.env.port || 8080
+const port = process.env.port || 3000
 app.listen(port, () => {
   global.StorageManager = new StorageHandler()
-  console.log(`SERVER STARTED: ` + PORT)
+  console.log(`SERVER STARTED: ` + port)
 })
